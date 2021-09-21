@@ -5,7 +5,7 @@ Motorized blinds are way to expensive (for that kind of home gadgets) so it's mi
 Here is my implementation of motorized "smart" blind for living room window (my goal was to increase TV screen visibility at the daytime).
 Of course, it's not an invention - you can find a lot of similar "arduino-based motorized blinds" guides and "how-to"'s on Google and YouTube; however, I provide you a good, clean and simple "you can do it" solution. 
 
-Here is a BOM (bill of materials) I've used for hardware (with some exceptions: for example, I already bought esp32 SoC and IR kit on AliExpress much cheaper). Most pricey parts are blinds emselv and geared stepped motor. Probably, you can try to use cheap (but powerfull) DC motor but I'm unsure. DC motors are hard to work for that implementation, so I recommend you to use stepper. As for Nema 17 motor and A4988 driver, I strongly recommend you to read [this tutorial](https://lastminuteengineers.com/a4988-stepper-motor-driver-arduino-tutorial/).
+Here is a BOM (bill of materials) I've used for hardware (with some exceptions: for example, I already bought esp32 SoC and IR kit on AliExpress much cheaper). Most pricey parts are blinds themselves and geared stepper motor. Probably, you can try to use cheap (but powerfull) DC motor but I'm unsure. DC motors are hard to work for that implementation, so I recommend you to use stepper. As for Nema 17 motor and A4988 driver, I strongly recommend you to read [this tutorial](https://lastminuteengineers.com/a4988-stepper-motor-driver-arduino-tutorial/).
 
 | Part name | Amazon link |  Price |
 | --- | --- | --- |
@@ -22,11 +22,11 @@ Here is a BOM (bill of materials) I've used for hardware (with some exceptions: 
 
 I'll not provide any schematics 'cause it pretty simple: you need to connect direction and step pins of A4988 driver to ESP32, also don't forget to connect IR receiver data pin to controller, what's all. You need to power A4988 driver and IR board from ESP32 3.3V or use 5V from the step-down converter (listed in BOM above).
 
-For the Google Assitant integration, initially I've chosen [Arduino IO+IFTTT](https://iotdesignpro.com/projects/google-assistant-controlled-led-using-ESP32-and-adafruit-io) but pushed later to switch to the [SinricPro](https://help.sinric.pro/pages/googlehome.html). I strongly recommend you to get rid of IFTTT because of poor support and bugness, and use Sinric Pro solution! These guys are quick to respond, [available on the GitHub](https://github.com/sinricpro), and their software works as expected (and, overall, supposed to be!)
+For the Google Assistant integration, initially I've chosen [Arduino IO+IFTTT](https://iotdesignpro.com/projects/google-assistant-controlled-led-using-ESP32-and-adafruit-io) but pushed later to switch to the [SinricPro](https://help.sinric.pro/pages/googlehome.html). I strongly recommend you to get rid of IFTTT because of poor support and bugs, and use Sinric Pro solution! These guys are quick to respond, [available on the GitHub](https://github.com/sinricpro), and their software works as expected (and, overall, supposed to be!)
 
-By the way, for additional advantages of my implementation, I've added IR remotes support (as you can easly see on schematics and source code), so your family members without smart phones and not added to your Google Assistant account still can use "smart blind" by old fashioned wasy, with the standard remote (what I'm really appreciate - it's ability to re-use existing physical remote and do not add new one to your TV stand! :smile:)
+By the way, for additional advantages of my implementation, I've added IR remotes support (as you can easily see on schematics and source code), so your family members without smart phones and not added to your Google Assistant account still can use "smart blind" by old fashioned wasy, with the standard remote (what I'm really appreciate - it's ability to re-use existing physical remote and do not add new one to your TV stand! :smile:)
 
-Here are some pics of hardware implementation. Initially I've tought to cover motor by cutted white polyesther tube but desided later to do not waste money (darn HomeDepot is way to expensive, even for small shit).
+Here are some pics of hardware implementation. Initially I've thought to cover motor by cutted white polyester tube but decided later to do not waste more money (darn HomeDepot is way to expensive, even for small shit).
 
 ![20210915_140346](https://user-images.githubusercontent.com/1036158/134110373-5897b7f9-7d4d-437c-8361-a0b7c665e1c9.jpg)
 
