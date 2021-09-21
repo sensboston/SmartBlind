@@ -20,7 +20,11 @@ Here is a BOM (bill of materials) I've used for hardware (with some exceptions: 
 | Blackout roller shade, 48"x72" | https://www.amazon.com/gp/product/B08GHLF6WT | $48.99 |
 | **Total:** | | **$123.60** |
 
-I'll not provide any schematics 'cause it pretty simple: you need to connect direction and step pins of A4988 driver to ESP32, also don't forget to connect IR receiver data pin to controller, what's all. You need to power A4988 driver and IR board from ESP32 3.3V or use 5V from the step-down converter (listed in BOM above).
+I'll not provide any schematics 'cause it's pretty simple: you just need to connect "direction" and "step" pins of A4988 driver to ESP32, also don't forget to connect IR receiver data pin to controller, what's all. You need to power A4988 driver and IR board from ESP32 3.3V or use 5V from the step-down converter (listed in BOM above).
+
+Built-in webserver provides pretty elegant landing page for controlling "smart" blind from your cellphone (and this page can be added as an "applet" to your home screen)
+
+<img height="600px" src="https://user-images.githubusercontent.com/1036158/134238890-d236538b-88f4-4d14-97a6-2c0fdb123a38.jpg">
 
 For the Google Assistant integration, initially I've chosen [Arduino IO+IFTTT](https://iotdesignpro.com/projects/google-assistant-controlled-led-using-ESP32-and-adafruit-io) but pushed later to switch to the [SinricPro](https://help.sinric.pro/pages/googlehome.html). I strongly recommend you to get rid of IFTTT because of poor support and bugs, and use Sinric Pro solution! These guys are quick to respond, [available on the GitHub](https://github.com/sinricpro), and their software works as expected (and, overall, supposed to be!)
 
