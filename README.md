@@ -30,7 +30,7 @@ Here are some pics of hardware implementation. Initially I've tought to cover mo
 
 ![20210915_140346](https://user-images.githubusercontent.com/1036158/134110373-5897b7f9-7d4d-437c-8361-a0b7c665e1c9.jpg)
 
-LED strips on the top of the controller aren't beyond to this project: it's just a time-based window hoighlighting gadget :smile: 
+LED strips on the top of the controller aren't beyond to this project - it's just my window highlighting gadget :smile: 
 
 ![20210915_140326](https://user-images.githubusercontent.com/1036158/134110374-2000402b-b4a0-45f8-a4c1-902ac7188a23.jpg)
 
