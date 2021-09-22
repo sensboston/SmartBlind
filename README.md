@@ -9,16 +9,17 @@ Here is a BOM (bill of materials) I've used for hardware (with some exceptions: 
 
 | Part name | Amazon link |  Price |
 | --- | --- | --- |
-| Nema 17 Geared Stepper Motor (gear ratio 5.18:1) | https://www.amazon.com/gp/product/B07V359RFB | $28.29 |
+| Blackout roller shade, 48"x72" | https://www.amazon.com/gp/product/B08GHLF6WT | $48.99 |
+| Nema 17 geared stepper motor (gear ratio 5.18:1) | https://www.amazon.com/gp/product/B07V359RFB | $28.29 |
+| Nema 17 geared stepper motor mounting bracket | https://www.amazon.com/STEPPERONLINE-Precision-Planetary-Mounting-ST-M8/dp/B07RM1VHZG | $5.28 | 
 | ESP32 development board | https://www.amazon.com/VKLSVAN-ESP-WROOM-32-Development-Dual-Mode-Microcontroller/dp/B07T6J3PXZ  |  $7.95 |
 | A4988 stepper motor drivers (5 pieces) | https://www.amazon.com/gp/product/B07Q4J6LHT | $6.59 |
 | 5mm to 8mm shaft coupler | https://www.amazon.com/gp/product/B07P6X8X7Y |  $5.99 |
 | IR transmitter & receiver kit | https://www.amazon.com/Digital-Receiver-Transmitter-Arduino-Compatible/dp/B01E20VQD8 | $7.99 |
-| PCB Board (two pieces, 8 x 12cm) | https://www.amazon.com/gp/product/B071135MB1 | $4.99 |
+| PCB boards (two pieces, 8 x 12cm) | https://www.amazon.com/gp/product/B071135MB1 | $4.99 |
 | DC converter 9V 12V (9V-22V) step down to DC 5V | https://www.amazon.com/gp/product/B0825TKY5M  | $5.86 |
-| AC 100-240V to DC 12V 2A Switching Power Supply Adapter | https://www.amazon.com/gp/product/B07WH8T4BX | $6.95 |
-| Blackout roller shade, 48"x72" | https://www.amazon.com/gp/product/B08GHLF6WT | $48.99 |
-| **Total:** | | **$123.60** |
+| AC 100-240V to DC 12V 2A power supply adapter | https://www.amazon.com/gp/product/B07WH8T4BX | $6.95 |
+| **Total:** | | **$128.88** |
 
 I'll not provide any schematics 'cause it's pretty simple: you just need to connect "direction" and "step" pins of A4988 driver to ESP32, also don't forget to connect IR receiver data pin to controller, what's all. You need to power A4988 driver and IR board from ESP32 3.3V or use 5V from the step-down converter (listed in BOM above).
 
