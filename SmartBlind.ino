@@ -53,22 +53,22 @@
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 #define WIFI_HOST       "SmartBlind"
-#define WIFI_SSID       "XXXXX"
-#define WIFI_PASS       "XXXXX"
+#define WIFI_SSID       "<YOUR_WIFI_SSID>"
+#define WIFI_PASS       "<YOUR_WIFI_PASSWORD>"
 
 #ifdef USE_MQTT
 #define IO_SERVER       "io.adafruit.com"
 #define IO_SERVERPORT   1883                  
-#define IO_USERNAME     "xxxxxxxxxxxx"
-#define IO_KEY          "aio_xxxxxxxxxxxxxxxxxxxxxxxx"
+#define IO_USERNAME     "<YOUR_IO_USERNAME>"
+#define IO_KEY          "<YOUR_IO_KEY>"
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, IO_SERVER, IO_SERVERPORT, IO_USERNAME, IO_KEY);       
 Adafruit_MQTT_Subscribe Blind_Control = Adafruit_MQTT_Subscribe(&mqtt, IO_USERNAME"/feeds/smart-blind");
 Adafruit_MQTT_Subscribe *subscription;
 #else
-#define APP_KEY         "2xx1a817-40a8-xxxx-af26-xxxxxxxxxxxxxx"                                       
-#define APP_SECRET      "fxx99618-7a81-4422-be07-xxxxxxxxxxxxxx-b1848b51-xxxx-40bd-xxxx-316ce4acffe8"
-#define BLINDS_ID       "XXXXXXXX"
+#define APP_KEY         "<YOUR_SINRIC_KEY>"                                       
+#define APP_SECRET      "<YOUR_SINRIC_SECRET>"
+#define ACUNIT_ID       "<YOUR_SINRIC_DEVICE_ID>"
 #endif
 
 #ifdef USE_WEB_SERVER
