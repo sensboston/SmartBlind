@@ -1,15 +1,18 @@
 #define USE_OTA
 #define USE_IR
 #define USE_WEB_SERVER
+#define USE_PREFERENCES
+#define USE_ACCELERATION
 //#define USE_MQTT
-
 #ifndef USE_MQTT
 #define USE_SINRIC_PRO
 #endif
 
 #include <WiFi.h>
 #include <AccelStepper.h>
+#ifdef USE_PREFERENCES
 #include <Preferences.h>
+#endif
 
 #ifdef USE_OTA
 #include <ArduinoOTA.h>
@@ -34,34 +37,38 @@
 
 #define DIR_PIN         5
 #define STEP_PIN        18
-#define MAX_MOTOR_SPEED 2000
-#define MOTOR_SPEED     1200
+#define MAX_MOTOR_SPEED 2000.0
+#define MOTOR_SPEED     980.0
+#define ACCELERATION    900.0
 
 #define STANDARD_ROLL   -1
 #define INVERSE_ROLL    1
 #define MOTOR_ON_RIGHT  -1  
 #define MOTOR_ON_LEFT   1
+#define STOPPED         0
+#define OPENING         1
+#define CLOSING         2
 
 #define MAX_DISTANCE    STANDARD_ROLL * MOTOR_ON_LEFT * (int) (1036*9.2)  // 1036 - full turn
 AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
 #define WIFI_HOST       "SmartBlind"
-#define WIFI_SSID       "<YOUR_WIFI_SSID>"
-#define WIFI_PASS       "<YOUR_WIFI_PASSWORD>"
+#define WIFI_SSID       "XXXXX"
+#define WIFI_PASS       "XXXXX"
 
 #ifdef USE_MQTT
 #define IO_SERVER       "io.adafruit.com"
 #define IO_SERVERPORT   1883                  
-#define IO_USERNAME     "<YOUR_IO_USERNAME>"
-#define IO_KEY          "<YOUR_IO_KEY>"
+#define IO_USERNAME     "xxxxxxxxxxxx"
+#define IO_KEY          "aio_xxxxxxxxxxxxxxxxxxxxxxxx"
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, IO_SERVER, IO_SERVERPORT, IO_USERNAME, IO_KEY);       
 Adafruit_MQTT_Subscribe Blind_Control = Adafruit_MQTT_Subscribe(&mqtt, IO_USERNAME"/feeds/smart-blind");
 Adafruit_MQTT_Subscribe *subscription;
 #else
-#define APP_KEY         "<YOUR_SINRIC_KEY>"                                       
-#define APP_SECRET      "<YOUR_SINRIC_SECRET>"
-#define ACUNIT_ID       "<YOUR_SINRIC_DEVICE_ID>"
+#define APP_KEY         "2xx1a817-40a8-xxxx-af26-xxxxxxxxxxxxxx"                                       
+#define APP_SECRET      "fxx99618-7a81-4422-be07-xxxxxxxxxxxxxx-b1848b51-xxxx-40bd-xxxx-316ce4acffe8"
+#define BLINDS_ID       "XXXXXXXX"
 #endif
 
 #ifdef USE_WEB_SERVER
@@ -69,11 +76,14 @@ WebServer server(80);
 #define GO_BACK server.sendHeader("Location", "/",true); server.send(302, "text/plane","");
 #endif
 
+#ifdef USE_PREFERENCES
 Preferences preferences;
+#endif
 unsigned long prevMillis = 0;
 bool prevMotorRunning = false;
 bool powerState = false;
 int blindsPosition = 0;
+int currentState = STOPPED;
 
 #ifdef USE_WEB_SERVER
 const char index_html[] PROGMEM = R"rawliteral(<!DOCTYPE html>
@@ -154,26 +164,38 @@ const char index_html[] PROGMEM = R"rawliteral(<!DOCTYPE html>
 </html>)rawliteral";
 #endif
 
+void stopMotor()
+{
+    Serial.println("STOP command");
+    stepper.setSpeed(0);
+    stepper.stop();
+    currentState = STOPPED;
+#ifdef USE_PREFERENCES    
+    preferences.putLong("pos", stepper.currentPosition());
+#endif
+    delay(500);
+}
+
 void closeBlind()
 {
     Serial.println("CLOSE BLIND command");
+    if (currentState == OPENING) stopMotor();
     stepper.moveTo(MAX_DISTANCE);
+#ifndef USE_ACCELERATION    
     stepper.setSpeed(MOTOR_SPEED);
+#endif    
+    currentState = CLOSING;
 }
 
 void openBlind()
 {
     Serial.println("OPEN BLIND command");
+    if (currentState == CLOSING) stopMotor();
     stepper.moveTo(0);
+#ifndef USE_ACCELERATION    
     stepper.setSpeed(MOTOR_SPEED);
-}
-
-void stopMotor()
-{
-    Serial.println("STOP command");
-    stepper.setSpeed(0); 
-    stepper.stop();
-    preferences.putLong("pos", stepper.currentPosition());
+#endif    
+    currentState = OPENING;    
 }
 
 void handleHTTPCommand()
@@ -214,10 +236,17 @@ void setup()
 {
     Serial.begin(115200);
 
+#ifdef USE_PREFERENCES
     preferences.begin("smartblind", false);
     long pos = preferences.getLong("pos", 0);
+#else    
+    long pos = 0;
+#endif    
     stepper.setCurrentPosition(pos);
     stepper.setMaxSpeed(MAX_MOTOR_SPEED);
+#ifdef USE_ACCELERATION
+    stepper.setAcceleration(ACCELERATION);    
+#endif
 
 #ifdef USE_IR  
     // Start IR receiver service
@@ -288,8 +317,10 @@ void loop()
     {
         if (WiFi.status() != WL_CONNECTED)
         {
+#ifdef USE_PREFERENCES            
             preferences.putLong("pos", stepper.currentPosition()); 
             preferences.end();
+#endif            
             ESP.restart();
         }
         else prevMillis = millis();
@@ -308,25 +339,34 @@ void loop()
             switch (IrReceiver.decodedIRData.decodedRawData)
             {
                 // close blind: TV - ">>", big LED remote - "☼↓", small LED remote - "+"
-                case 0xA45BFB04: case 0xA25DFF00: case 0xB54AFF00:  closeBlind(); break;
+                case 0xA45BFB04: /*case 0xA25DFF00: case 0xB54AFF00:*/  closeBlind(); break;
                 // open blind:  TV - "<<", big LED remote - "↑☼", small LED remote - "-"
-                case 0xB04FFB04: case 0xA35CFF00: case 0xAD52FF00:  openBlind(); break;
+                case 0xB04FFB04: /*case 0xA35CFF00: case 0xAD52FF00:*/  openBlind(); break;
                 // stop motor:  TV - "SLEEP", big LED remote - "►│", small LED remote - "A7"
-                case 0xE41BFB04: case 0xBE41FF00: case 0xBD42FF00: stopMotor(); break;
+                case 0xE41BFB04: /* case 0xBE41FF00: case 0xBD42FF00: */ stopMotor(); break;
             }
         }
         IrReceiver.resume();
     }
 #endif    
 
-    stepper.runSpeedToPosition();
+    if (currentState != STOPPED)
+    {
+#ifdef USE_ACCELERATION
+        stepper.run();
+#else
+        stepper.runSpeedToPosition();
+#endif
+    }    
 
     // Save position if motor stopped running
     bool motorRunning = stepper.isRunning();
     if (prevMotorRunning != motorRunning)
     {
         prevMotorRunning = motorRunning;
+#ifdef USE_PREFERENCES        
         if (!motorRunning) preferences.putLong("pos", stepper.currentPosition());
+#endif        
     }
 
     if (WiFi.status() == WL_CONNECTED) 
